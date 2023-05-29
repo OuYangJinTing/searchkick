@@ -99,9 +99,9 @@ module Searchkick
         # always add callbacks, even when callbacks is false
         # so Model.callbacks block can be used
         if respond_to?(:after_commit)
-          after_commit :reindex, if: -> { Searchkick.callbacks?(default: callbacks) }
+          after_commit :reindex, if: -> { Searchkick.callbacks?(default: callbacks) && (previous_changes.any? || destroyed?) }
         elsif respond_to?(:after_save)
-          after_save :reindex, if: -> { Searchkick.callbacks?(default: callbacks) }
+          after_save :reindex, if: -> { Searchkick.callbacks?(default: callbacks) && previous_changes.any? }
           after_destroy :reindex, if: -> { Searchkick.callbacks?(default: callbacks) }
         end
       end

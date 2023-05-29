@@ -73,4 +73,12 @@ class CallbacksTest < Minitest::Test
 
     assert_search "product", ["product a", "product b"]
   end
+
+  def test_after_commit_callback
+    store_names ["Product A"]
+
+    assert_not_called_on_instance_of(Product, :reindex) { Product.last.save! }
+    assert_called_on_instance_of(Product, :reindex) { Product.last.update!(name: "B") }
+    assert_called_on_instance_of(Product, :reindex) { Product.last.destroy! }
+  end
 end
